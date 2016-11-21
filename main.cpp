@@ -36,7 +36,7 @@ int main(int argc, const char* argv[])
 	if (argc < 2)
 	{
 		cout << "Usage: multiGet.exe [Options] url\n" << "\t-o string\n\t\tWrite output to <file> instead of default\n";
-			//<< "\t-parallel\n\t\tDownload chunks in parallel instead of sequentially\n";
+			//TODO << "\t-parallel\n\t\tDownload chunks in parallel instead of sequentially\n";
 		exit(1);
 	}
 	FILE* outputFile;
@@ -45,6 +45,7 @@ int main(int argc, const char* argv[])
 
 	if (strcmp(argv[i], "-o") == 0)
 	{
+		//TODO: add test case when filename is missing
 		outputFile = fopen(argv[++i],"wb");
 		i++;
 	}
