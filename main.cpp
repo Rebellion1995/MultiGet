@@ -35,14 +35,18 @@ int main(int argc, const char* argv[])
 {
 	if (argc < 2)
 	{
-		cout << "Usage: multiGet.exe [Options] url\n" << "\t-o string\n\t\tWrite output to <file> instead of default\n";
+		cout << "Usage: multiGet.exe [Options] url\n" << "\t-o string\n\t\tWrite output to <file> instead of default\n"
+			<< "\t-scn number\n\t\tSet number of chunks to download (default is 4)\n"
+			<< "\t-scs number\n\t\tSet chunk size (default is 1MiB)\n";
 			//TODO << "\t-parallel\n\t\tDownload chunks in parallel instead of sequentially\n";
 		exit(1);
 	}
 	FILE* outputFile;
-
+	size_t chunkNumber = CH_NUM;
+	size_t chunkSize = MiB;
 	int i = 1; //command line arguments iterator
 
+	//File output option
 	if (strcmp(argv[i], "-o") == 0)
 	{
 		//TODO: add test case when filename is missing
@@ -52,6 +56,21 @@ int main(int argc, const char* argv[])
 	else 
 		outputFile = fopen("Download4MiB.jar","wb"); //default file
 
+	//Set chunks number option
+	if (strcmp(argv[i], "-scn") == 0)
+	{
+		chunkNumber = atoi(argv[++i]);
+		i++;
+	}
+
+	//Set chunk size option
+	if (strcmp(argv[i], "-scs") == 0)
+	{
+		chunkSize = atoi(argv[++i]);
+		i++;
+	}
+
+	//Parallel download option
 	if (strcmp(argv[i], "-parallel") == 0)
 	{
 		//TODO
@@ -67,7 +86,6 @@ int main(int argc, const char* argv[])
 	string url = argv[i];
 
 
-	size_t chunkNumber = CH_NUM;
 	MemoryStruct* chunks = new MemoryStruct[chunkNumber];
 	for (int j = 0; j < chunkNumber; j++) { chunks[j].memory = new char[1]; chunks[j].size = 0; }
 
@@ -76,7 +94,7 @@ int main(int argc, const char* argv[])
 	curl = curl_easy_init();
 
 	int lowerbound = 0;
-	int upperbound = MiB;
+	int upperbound = chunkSize;
 	for (int j = 0; j < chunkNumber; j++)
 	{
 
@@ -90,7 +108,7 @@ int main(int argc, const char* argv[])
 			res = curl_easy_perform(curl); //GET
 		}
 		lowerbound = upperbound;
-		upperbound += MiB;
+		upperbound += chunkSize;
 	}
 	curl_easy_cleanup(curl);
 
