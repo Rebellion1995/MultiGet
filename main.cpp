@@ -36,6 +36,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userp)
 //thread run function
 static void get_chunk(void* url, string range, int num, MemoryStruct* chunks)
 {
+	cout << "Started thread" << num << "\n";
 	CURL* curl;
 	curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -141,10 +142,10 @@ int main(int argc, const char* argv[])
 			lowerbound = upperbound;
 			upperbound += chunkSize;
 		}
-		//cout << "created all\n";
+		cout << "created all\n";
 		for (int j = 0; i < chunkNumber; j++) //main waits for threads to finish
 		{
-			//cout << "Main joining thread " << j << "\n";
+			cout << "Main joining thread " << j << "\n";
 			threads[j].join();
 		}
 		delete threads;
